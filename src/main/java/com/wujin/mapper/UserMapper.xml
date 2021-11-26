@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wujin.mapper.UserMapper">
+    <resultMap id="BaseResultMap" type="User" >
+        <id column="id" property="id"/>
+        <result column="user_name" property="user_name"/>
+        <result column="password" property="password"></result>
+        <result column="real_name" property="real_name"></result>
+        <result column="id_card" property="id_card"/>
+        <result column="sex" property="sex"/>
+        <result column="tel" property="tel"/>
+        <result column="create_time" property="create_time"/>
+        <result column="del_flag" property="del_flag"/>
+    </resultMap>
+
+    <select id="queryUserAll" parameterType="User" resultMap="BaseResultMap">
+        SELECT
+            `user`.id,
+            `user`.user_name,
+            `user`.`password`,
+            `user`.real_name,
+            `user`.id_card,
+            `user`.sex,
+            `user`.tel,
+            `user`.create_time
+        FROM
+            `user`
+        WHERE
+            `user`.del_flag =0
+    </select>
+
+    <select id="logincheck" parameterType="User" resultType="User">
+        select *
+        from user
+        <where>
+             `user_name` = #{user_name}
+                AND `password` = #{password}
+        </where>
+    </select>
+   <insert id="register" parameterType="User">
+        insert into user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="user_name != null">
+                user_name,
+            </if>
+            <if test="password != null">
+                password,
+            </if>
+            <if test="real_name != null">
+                real_name,
+            </if>
+            <if test="id_card != null">
+                id_card,
+            </if>
+            <if test="sex != null">
+                sex,
+            </if>
+            <if test="tel != null">
+                tel,
+            </if>
+            <if test="create_time != null">
+                create_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id},
+            </if>
+            <if test="user_name != null">
+                #{user_name},
+            </if>
+            <if test="password != null">
+                #{password},
+            </if>
+            <if test="real_name != null">
+                #{real_name},
+            </if>
+            <if test="id_card != null">
+                #{id_card},
+            </if>
+            <if test="sex != null">
+                #{sex},
+            </if>
+            <if test="tel != null">
+                #{tel},
+            </if>
+            <if test="create_time != null">
+                #{create_time},
+            </if>
+        </trim>
+    </insert>
+    <select id="checkUsername" parameterType="java.lang.String" resultType="User">
+        select * from user where user_name=#{user_name}  and  `user`.del_flag =0
+    </select>
+
+    <select id="selectbyId" parameterType="java.lang.String" resultType="User">
+        select * from user where id=#{id}  and  `user`.del_flag =0
+    </select>
+
+    <update id="updateById" parameterType="User">
+        update user
+        <set>
+            <if test="user_name != null">
+               user_name = #{user_name},
+            </if>
+            <if test="password != null">
+                password = #{password},
+            </if>
+            <if test="real_name != null">
+                real_name =  #{real_name},
+            </if>
+            <if test="id_card != null">
+               id_card = #{id_card},
+            </if>
+            <if test="sex != null">
+                sex = #{sex},
+            </if>
+            <if test="tel != null">
+                tel = #{tel},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="deleteUserById" parameterType="java.lang.String">
+        update user set del_flag=1 where id=#{id}
+    </update>
+
+    <select id="findByName" parameterType="java.lang.String" resultMap="BaseResultMap">
+        SELECT
+            `user`.id,
+            `user`.user_name,
+            `user`.`password`,
+            `user`.real_name,
+            `user`.id_card,
+            `user`.sex,
+            `user`.tel,
+            `user`.create_time
+        FROM
+            `user`
+        WHERE
+            `user`.del_flag =0 and `user`.user_name like concat('%',#{user_name},'%')
+    </select>
+
+</mapper>

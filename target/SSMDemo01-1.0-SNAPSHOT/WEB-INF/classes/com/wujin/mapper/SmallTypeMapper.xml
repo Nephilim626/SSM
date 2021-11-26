@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wujin.mapper.SmallTypeMapper">
+
+    <resultMap id="ResultMap" type="Small_type" >
+        <id column="id" property="id"/>
+        <result column="big_type_id" property="big_type_id"/>
+        <result column="type_name" property="type_name"></result>
+        <result column="create_time" property="create_time"></result>
+        <association property="big_type" javaType="com.wujin.pojo.Big_type">
+            <id column="id" property="id"></id>
+            <result column="big_type_name" property="big_type_name"></result>
+        </association>
+    </resultMap>
+
+    <select id="queryAll"  resultType="Small_type">
+        SELECT *
+        FROM small_type
+        WHERE small_type.del_flag=0
+    </select>
+
+    <select id="queryAllSmallType"  resultMap="ResultMap">
+        SELECT
+            small_type.id,
+            small_type.big_type_id,
+            small_type.type_name,
+            small_type.create_time,
+            big_type.big_type_name
+        FROM
+            small_type left JOIN big_type
+                                 ON small_type.big_type_id =big_type.id
+        WHERE
+            small_type.del_flag = 0
+    </select>
+
+    <insert id="register" parameterType="Small_type">
+        insert into small_type
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="big_type_id != null">
+                big_type_id,
+            </if>
+            <if test="type_name != null">
+                type_name,
+            </if>
+            <if test="create_time != null">
+                create_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id},
+            </if>
+            <if test="big_type_id != null">
+                #{big_type_id},
+            </if>
+            <if test="type_name != null">
+                #{type_name},
+            </if>
+            <if test="create_time != null">
+                #{create_time},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="selectbyId" parameterType="java.lang.String" resultType="Small_type">
+        select * from small_type where id=#{id}  and  del_flag =0
+    </select>
+
+
+    <update id="updateById" >
+        update small_type
+        <set>
+            <if test="big_type_id != null">
+                big_type_id = #{big_type_id},
+            </if>
+            <if test="type_name != null">
+                type_name = #{type_name},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="deleteSmallType" parameterType="java.lang.String">
+        update small_type set del_flag=1 where id=#{id}
+    </update>
+
+    <select id="findByTypename"  resultMap="ResultMap">
+        SELECT
+            small_type.id,
+            small_type.big_type_id,
+            small_type.type_name,
+            small_type.create_time,
+            big_type.big_type_name
+        FROM
+            small_type left JOIN big_type
+                                 ON small_type.big_type_id =big_type.id
+        WHERE
+            small_type.del_flag = 0 and  small_type.type_name like concat('%',#{type_name},'%')
+    </select>
+
+    <select id="checkSmallTypeExist" parameterType="java.lang.String" resultType="Small_type">
+        select * from small_type where big_type_id=#{big_type_id}  and  `small_type`.del_flag =0
+    </select>
+
+</mapper>

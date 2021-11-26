@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wujin.mapper.GoodsEvaluateMapper">
+
+
+    <resultMap id="ResultMap" type="com.wujin.pojo.Goods_evaluate" >
+        <id column="id" property="id"/>
+        <result column="goods_id" property="goods_id"/>
+        <result column="user_id" property="user_id"></result>
+        <result column="content" property="content"/>
+        <result column="picture" property="picture"/>
+        <result column="level" property="level"/>
+        <association property="user" javaType="com.wujin.pojo.User">
+            <id column="id" property="id"></id>
+            <result column="user_name" property="user_name"></result>
+        </association>
+        <association property="goods" javaType="com.wujin.pojo.Goods">
+            <id column="id" property="id"></id>
+            <result  column="goods_name" property="goods_name"></result>
+            <result column="num" property="num"></result>
+        </association>
+    </resultMap>
+
+<select id="queryGoodsEvaluateAll" resultMap="ResultMap">
+    SELECT
+        goods_evaluate.id,
+        goods_evaluate.goods_id,
+        goods_evaluate.user_id,
+        goods_evaluate.content,
+        goods_evaluate.picture,
+        goods_evaluate.`level`,
+        goods.goods_name,
+        `user`.user_name
+    FROM
+        goods_evaluate
+            LEFT JOIN `user` ON goods_evaluate.user_id = `user`.id
+            LEFT JOIN goods ON goods_evaluate.goods_id = goods.id
+</select>
+
+    <insert id="register" >
+        insert into goods_evaluate
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="goods_id != null">
+                goods_id,
+            </if>
+            <if test="user_id != null">
+                user_id,
+            </if>
+            <if test="content != null">
+                content,
+            </if>
+            <if test="picture != null">
+                picture,
+            </if>
+            <if test="level != null">
+                level,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id},
+            </if>
+            <if test="goods_id != null">
+                #{goods_id},
+            </if>
+            <if test="user_id != null">
+                #{user_id},
+            </if>
+            <if test="content != null">
+                #{content},
+            </if>
+            <if test="picture != null">
+                #{picture},
+            </if>
+            <if test="level != null">
+                #{level},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="selectbyId" parameterType="java.lang.String" resultType="com.wujin.pojo.Goods_evaluate">
+        select * from goods_evaluate where id=#{id}
+    </select>
+
+    <update id="editEvaluate" >
+        update goods_evaluate
+        <set>
+            <if test="content != null">
+                content = #{content},
+            </if>
+            <if test="picture != null">
+                picture = #{picture},
+            </if>
+            <if test="level != null">
+                level = #{level},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteEvaluate">
+        DELETE  from goods_evaluate
+        where id=#{id}
+    </delete>
+
+    <select id="findByUsername" resultMap="ResultMap">
+        SELECT
+            goods_evaluate.id,
+            goods_evaluate.goods_id,
+            goods_evaluate.user_id,
+            goods_evaluate.content,
+            goods_evaluate.picture,
+            goods_evaluate.`level`,
+            goods.goods_name,
+            `user`.user_name
+        FROM
+            goods_evaluate
+                LEFT JOIN `user` ON goods_evaluate.user_id = `user`.id
+                LEFT JOIN goods ON goods_evaluate.goods_id = goods.id
+        where `user`.user_name  like concat('%',#{user_name},'%')
+    </select>
+
+</mapper>

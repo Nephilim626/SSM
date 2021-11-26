@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wujin.mapper.AddressMapper">
+
+    <resultMap id="ResultMap" type="Address" >
+        <id column="id" property="id"/>
+        <result column="consignee" property="consignee"/>
+        <result column="consignee_tel" property="consignee_tel"></result>
+        <result column="address" property="address"></result>
+        <result column="user_id" property="user_id"/>
+        <result column="create_time" property="create_time"/>
+        <association property="user" javaType="com.wujin.pojo.User">
+        <id column="id" property="id"></id>
+        <result column="user_name" property="user_name"></result>
+    </association>
+    </resultMap>
+
+    <select id="queryAddressAll" parameterType="Address" resultMap="ResultMap">
+        SELECT
+            address.id,
+            address.consignee,
+            address.consignee_tel,
+            address.address,
+            address.user_id,
+            address.create_time,
+            `user`.user_name
+        FROM
+            address left  join user
+           on    address.user_id = `user`.id
+        WHERE
+            address.del_flag = 0
+    </select>
+
+
+
+    <insert id="register" parameterType="Address">
+        insert into address
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="consignee != null">
+                consignee,
+            </if>
+            <if test="consignee_tel != null">
+                consignee_tel,
+            </if>
+            <if test="address != null">
+                address,
+            </if>
+            <if test="user_id != null">
+                user_id,
+            </if>
+            <if test="create_time != null">
+                create_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id},
+            </if>
+            <if test="consignee != null">
+                #{consignee},
+            </if>
+            <if test="consignee_tel != null">
+                #{consignee_tel},
+            </if>
+            <if test="address != null">
+                #{address},
+            </if>
+            <if test="user_id != null">
+                #{user_id},
+            </if>
+            <if test="create_time != null">
+                #{create_time},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateAddressById" parameterType="Address">
+        update address
+        <set>
+            <if test="consignee != null">
+                consignee = #{consignee},
+            </if>
+            <if test="consignee_tel != null">
+                consignee_tel = #{consignee_tel},
+            </if>
+            <if test="address != null">
+                address =  #{address},
+            </if>
+            <if test="user_id != null">
+                user_id = #{user_id},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="deleteAddressById" parameterType="java.lang.String">
+        update address set del_flag=1 where id=#{id}
+    </update>
+
+    <select id="findByName" parameterType="java.lang.String" resultMap="ResultMap">
+        SELECT
+            address.id,
+            address.consignee,
+            address.consignee_tel,
+            address.address,
+            address.user_id,
+            address.create_time,
+            `user`.user_name
+        FROM
+            address left  join user
+                               on    address.user_id = `user`.id
+        WHERE  address.del_flag = 0 and   `user`.user_name like concat('%',#{goods_name},'%')
+    </select>
+
+    <select id="selectbyId" parameterType="java.lang.String" resultType="Address">
+        select * from address where id=#{id}  and  del_flag =0
+    </select>
+
+    <select id="queryAllbyName"  resultMap="ResultMap">
+        SELECT
+            address.id,
+            address.consignee,
+            address.consignee_tel,
+            address.address,
+            address.user_id,
+            address.create_time,
+            `user`.user_name
+        FROM
+            address left  join user
+                               on    address.user_id = `user`.id
+        WHERE
+            address.del_flag = 0 and     address.user_id=#{user_id}
+    </select>
+
+</mapper>

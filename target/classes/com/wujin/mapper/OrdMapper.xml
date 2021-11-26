@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wujin.mapper.OrdMapper">
+
+    <resultMap id="ResultMap" type="Ord" >
+        <id column="id" property="id"/>
+        <result column="goods_id" property="goods_id"/>
+        <result column="user_id" property="user_id"></result>
+        <result column="address_id" property="address_id"></result>
+        <result column="num" property="num"/>
+        <result column="price" property="price"/>
+        <result column="ord_no" property="ord_no"/>
+        <result column="ord_state" property="ord_state"/>
+        <result column="create_time" property="create_time"/>
+        <association property="user" javaType="com.wujin.pojo.User">
+            <id column="id" property="id"></id>
+            <result column="user_name" property="user_name"></result>
+        </association>
+        <association property="goods" javaType="com.wujin.pojo.Goods">
+            <id column="id" property="id"></id>
+            <result  column="goods_name" property="goods_name"></result>
+            <result column="num" property="num"></result>
+        </association>
+        <association property="address" javaType="com.wujin.pojo.Address">
+            <id column="id" property="id"></id>
+            <result column="consignee" property="consignee"></result>
+            <result column="address" property="address"></result>
+        </association>
+    </resultMap>
+
+    <select id="queryOrdAll" parameterType="Ord" resultMap="ResultMap">
+        SELECT
+            ord.id,
+            goods.goods_name,
+            `user`.user_name,
+            address.address,
+               address.consignee,
+            ord.num,
+            goods.num,
+            ord.price,
+            ord.ord_no,
+            ord.ord_state,
+            ord.create_time
+        FROM ord LEFT JOIN `user`
+                           ON ord.user_id=`user`.id
+                 LEFT JOIN goods
+                           on ord.goods_id=goods.id
+                 LEFT JOIN address
+                           ON ord.address_id=address.id
+        WHERE ord.del_flag =0
+        order by  ord.create_time
+    </select>
+
+    <insert id="register" parameterType="Ord">
+        insert into ord
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="goods_id != null">
+                goods_id,
+            </if>
+            <if test="user_id != null">
+                user_id,
+            </if>
+            <if test="address_id != null">
+                address_id,
+            </if>
+            <if test="num != null">
+                num,
+            </if>
+            <if test="price != null">
+                price,
+            </if>
+            <if test="ord_no != null">
+                ord_no,
+            </if>
+            <if test="ord_state != null">
+                ord_state,
+            </if>
+            <if test="create_time != null">
+                create_time,
+            </if>
+            <if test="del_flag != null">
+                del_flag,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id},
+            </if>
+            <if test="goods_id != null">
+                #{goods_id},
+            </if>
+            <if test="user_id != null">
+                #{user_id},
+            </if>
+            <if test="address_id != null">
+                #{address_id},
+            </if>
+            <if test="num != null">
+                #{num},
+            </if>
+            <if test="price != null">
+                #{price},
+            </if>
+            <if test="ord_no != null">
+                #{ord_no},
+            </if>
+            <if test="ord_state != null">
+                #{ord_state},
+            </if>
+            <if test="create_time != null">
+                #{create_time},
+            </if>
+            <if test="del_flag != null">
+                #{del_flag},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateOrdById" parameterType="Ord">
+        update ord
+        <set>
+            <if test="goods_id != null">
+                goods_id = #{goods_id},
+            </if>
+            <if test="user_id != null">
+                user_id = #{user_id},
+            </if>
+            <if test="address_id != null">
+                address_id =  #{address_id},
+            </if>
+            <if test="num != null">
+                num =  #{num},
+            </if>
+            <if test="price != null">
+                price = #{price},
+            </if>
+            <if test="ord_no != null">
+                ord_no = #{ord_no},
+            </if>
+            <if test="ord_state != null">
+                ord_state = #{ord_state},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="deleteOrdById" parameterType="java.lang.String">
+        update ord set del_flag=1 where id=#{id} and ord_state=5
+    </update>
+
+    <select id="findByUsername" parameterType="java.lang.String" resultMap="ResultMap">
+        SELECT
+            ord.id,
+            goods.goods_name,
+            `user`.user_name,
+            address.address,
+            address.consignee,
+            ord.num,
+            goods.num,
+            ord.price,
+            ord.ord_no,
+            ord.ord_state,
+            ord.create_time
+        FROM ord LEFT JOIN `user`
+                           ON ord.user_id=`user`.id
+                 LEFT JOIN goods
+                           on ord.goods_id=goods.id
+                 LEFT JOIN address
+                           ON ord.address_id=address.id
+        WHERE  `user`.user_name like concat('%',#{user_name},'%') and ord.del_flag =0
+    </select>
+
+    <select id="selectbyId" parameterType="java.lang.String" resultType="Ord">
+        select * from ord where id=#{id}  and  del_flag =0
+    </select>
+
+
+</mapper>

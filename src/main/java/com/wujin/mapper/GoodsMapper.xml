@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wujin.mapper.GoodsMapper">
+
+    <select id="queryGoodsAll" parameterType="com.wujin.pojo.Goods" resultType="com.wujin.pojo.Goods">
+        SELECT
+            goods.id,
+            goods.goods_name,
+            goods.price,
+            goods.describtion,
+            goods.num,
+            goods.picture,
+            goods.manufacturer,
+            goods.small_type_id,
+            goods.create_time,
+            goods.states,
+            goods.score
+        FROM
+            goods
+        WHERE
+            goods.del_flag = 0
+        order by goods.create_time
+    </select>
+
+
+    <insert id="register" parameterType="Goods">
+        insert into goods
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="goods_name != null">
+                goods_name,
+            </if>
+            <if test="price != null">
+                price,
+            </if>
+            <if test="describtion != null">
+                describtion,
+            </if>
+            <if test="num != null">
+                num,
+            </if>
+            <if test="picture != null">
+                picture,
+            </if>
+            <if test="manufacturer != null">
+                manufacturer,
+            </if>
+            <if test="small_type_id != null">
+                small_type_id,
+            </if>
+            <if test="create_time != null">
+                create_time,
+            </if>
+            <if test="del_flag != null">
+                del_flag,
+            </if>
+            <if test="states != null">
+                states,
+            </if>
+            <if test="score != null">
+                score,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id},
+            </if>
+            <if test="goods_name != null">
+                #{goods_name},
+            </if>
+            <if test="price != null">
+                #{price},
+            </if>
+            <if test="describtion != null">
+                #{describtion},
+            </if>
+            <if test="num != null">
+                #{num},
+            </if>
+            <if test="picture != null">
+                #{picture},
+            </if>
+            <if test="manufacturer != null">
+                #{manufacturer},
+            </if>
+            <if test="small_type_id != null">
+                #{small_type_id},
+            </if>
+            <if test="create_time != null">
+                #{create_time},
+            </if>
+            <if test="del_flag != null">
+                #{del_flag},
+            </if>
+            <if test="states != null">
+                #{states},
+            </if>
+            <if test="score != null">
+                #{score},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="checkGoodsName" parameterType="java.lang.String" resultType="Goods">
+        select * from goods where goods_name=#{good_name}  and  `goods`.del_flag =0
+    </select>
+
+    <select id="findByName" parameterType="java.lang.String" resultType="com.wujin.pojo.Goods">
+        SELECT
+            goods.id,
+            goods.goods_name,
+            goods.price,
+            goods.describtion,
+            goods.num,
+            goods.picture,
+            goods.manufacturer,
+            goods.small_type_id,
+            goods.create_time,
+            goods.states,
+            goods.score
+        FROM
+            goods
+        WHERE
+            goods.del_flag = 0 and goods.goods_name like concat('%',#{goods_name},'%')
+    </select>
+
+    <update id="updateById" >
+        update goods
+        <set>
+            <if test="goods_name != null">
+                goods_name = #{goods_name},
+            </if>
+            <if test="price != null">
+                price = #{price},
+            </if>
+            <if test="describtion != null">
+                describtion =  #{describtion},
+            </if>
+            <if test="num != null">
+                num = #{num},
+            </if>
+            <if test="picture != null">
+                picture = #{picture},
+            </if>
+            <if test="manufacturer != null">
+                manufacturer = #{manufacturer},
+            </if>
+            <if test="small_type_id != null">
+                small_type_id = #{small_type_id},
+            </if>
+            <if test="states != null">
+                states = #{states},
+            </if>
+            <if test="score != null">
+                score = #{score},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="deleteGoodsById" parameterType="java.lang.String">
+        update goods set del_flag=1 where id=#{id}
+    </update>
+
+    <select id="selectbyId" parameterType="java.lang.String" resultType="Goods">
+        select * from goods where id=#{id}  and  del_flag =0
+    </select>
+
+    <update id="updateNumById" parameterType="java.lang.String" >
+        update goods set goods.num  = #{num} where id=#{id}
+    </update>
+
+    <select id="getNumbyId" parameterType="java.lang.String" resultType="java.lang.String">
+        select   goods.num from goods where id=#{id}  and  del_flag =0
+    </select>
+
+    <select id="checkGoodsExist" parameterType="java.lang.String" resultType="Goods">
+        select * from goods where small_type_id=#{small_type_id}  and  `goods`.del_flag =0
+    </select>
+
+</mapper>

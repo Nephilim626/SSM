@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wujin.mapper.BigTypeMapper">
+    <select id="queryAll"  resultType="Big_type">
+        SELECT *
+        FROM big_type
+        WHERE big_type.del_flag=0
+    </select>
+
+    <select id="queryBigTypeAll"  resultType="Big_type">
+
+        SELECT
+            big_type.id,
+            big_type.big_type_name,
+            big_type.create_time
+        FROM
+            big_type
+        WHERE
+            big_type.del_flag =0
+
+    </select>
+
+    <insert id="register" >
+        insert into big_type
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="big_type_name != null">
+                big_type_name,
+            </if>
+            <if test="create_time != null">
+                create_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id},
+            </if>
+            <if test="big_type_name != null">
+                #{big_type_name},
+            </if>
+            <if test="create_time != null">
+                #{create_time},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="selectbyId" parameterType="java.lang.String" resultType="Big_type">
+        select * from big_type where id=#{id}  and  del_flag =0
+    </select>
+
+    <update id="updateById" >
+        update big_type
+        <set>
+            <if test="big_type_name != null">
+                big_type_name = #{big_type_name},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="deleteBigType" parameterType="java.lang.String">
+        update big_type set del_flag=1 where id=#{id}
+    </update>
+
+
+    <select id="findByName"  resultType="Big_type">
+
+        SELECT
+            big_type.id,
+            big_type.big_type_name,
+            big_type.create_time
+        FROM
+            big_type
+        WHERE
+            big_type.del_flag =0 and big_type_name like concat('%',#{big_type_name},'%')
+
+    </select>
+
+
+</mapper>
