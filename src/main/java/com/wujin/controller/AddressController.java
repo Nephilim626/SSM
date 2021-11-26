@@ -30,6 +30,7 @@ public class AddressController {
 
     @RequestMapping("/Alladdress")
     public  String getUser(@RequestParam(value = "pn",defaultValue = "1") Integer pn, Model model){
+
         PageHelper.startPage(pn,10);
         List<Address> list =addressService.queryAddressAll();
         PageInfo page=new PageInfo(list,10);
